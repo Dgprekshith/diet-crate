@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Work+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/diet-toggle.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FoodEstablishment","name":"Diet Crate","description":"Nutrition-matched meal delivery to IT Parks in Bangalore.","areaServed":"Bengaluru, India","servesCuisine":"Healthy meals"}
 </script>
@@ -110,6 +111,12 @@
       <div class="sec-head">
         <p class="eyebrow line">Our Crates</p>
         <h2>Four nutrition solutions. <em>Delivered to fit you.</em></h2>
+      </div>
+
+      <div class="diet-toggle">
+        <span>Choose your diet type:</span>
+        <label><input type="radio" name="diet" value="veg" checked> 🟢 Veg</label>
+        <label><input type="radio" name="diet" value="nonveg"> 🔴 Non-Veg</label>
       </div>
 
       <div class="crates">
@@ -255,6 +262,8 @@
           <ul class="park-list">
             <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Brigade Deccan Heights</li>
             <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Brigade Twin Towers</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>DNR Altitude</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Sattva</li>
           </ul>
         <a class="btn btn-solid btn-lg" href="#contact" data-prefill="IT Park pilot">Request a pilot<svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </div>
@@ -318,7 +327,13 @@
             <span class="err" id="e-name" hidden></span>
           </label>
           <label for="f-company">Company or IT Park
-            <input id="f-company" autocomplete="organization">
+            <select id="f-company">
+              <option value="">Select your building</option>
+              <option>Brigade Deccan Heights</option>
+              <option>Brigade Twin Towers</option>
+              <option>DNR Altitude</option>
+              <option>Sattva</option>
+            </select>
           </label>
         </div>
         <label for="f-crate">Preferred crate

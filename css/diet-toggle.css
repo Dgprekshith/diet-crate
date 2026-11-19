@@ -1,0 +1,22 @@
+/* Veg / Non-Veg toggle */
+.diet-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin: 1.2rem 0 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+.diet-toggle label {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+.diet-toggle input[type="radio"] {
+  accent-color: #2b7a4b;
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
