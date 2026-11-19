@@ -71,7 +71,7 @@ You have two easy ways to deploy to Vercel:
 2. Push your project to GitHub:
    ```powershell
    cd C:\path\to\diet-crate-website
-   git init
+   git init 
    git add .
    git commit -m "Diet Crate website"
    git branch -M main
