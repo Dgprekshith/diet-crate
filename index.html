@@ -15,7 +15,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Work+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/diet-toggle.css">
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  window._fbReady = new Promise(resolve => {
+    const app = initializeApp({
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+    });
+    const db = getFirestore(app);
+    window._saveOrder = async (order) => {
+      try { await addDoc(collection(db, "orders"), { ...order, createdAt: serverTimestamp() }); }
+      catch(e) { console.warn("Order save failed", e); }
+    };
+    resolve();
+  });
+</script>
+<!-- Razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FoodEstablishment","name":"Diet Crate","description":"Nutrition-matched meal delivery to IT Parks in Bangalore.","areaServed":"Bengaluru, India","servesCuisine":"Healthy meals"}
 </script>
@@ -64,6 +83,7 @@
       <a href="#crates">Our Crates</a>
       <a href="#pricing">Pricing</a>
       <a href="#it-parks">For IT Parks</a>
+      <a href="#about">About Us</a>
       <a href="#contact">Contact</a>
     </nav>
 
@@ -111,12 +131,6 @@
       <div class="sec-head">
         <p class="eyebrow line">Our Crates</p>
         <h2>Four nutrition solutions. <em>Delivered to fit you.</em></h2>
-      </div>
-
-      <div class="diet-toggle">
-        <span>Choose your diet type:</span>
-        <label><input type="radio" name="diet" value="veg" checked> 🟢 Veg</label>
-        <label><input type="radio" name="diet" value="nonveg"> 🔴 Non-Veg</label>
       </div>
 
       <div class="crates">
@@ -364,6 +378,37 @@
 
   <!-- CTA BAND -->
   <section class="cta-section">
+
+  <!-- ABOUT US -->
+  <section class="section tint" id="about">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow">About Us</p>
+        <h2>Healthy food. <em>Real people. Real care.</em></h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>Diet Crate was started with one simple belief — office workers deserve a hot, fresh, nutritious meal every day without the hassle of cooking or ordering junk food.</p>
+          <p>We serve Yeswanthpur, Bangalore, delivering daily to Brigade Deccan Heights, Brigade Twin Towers, DNR Altitude and Sattva. Every meal is dietician-approved, made fresh each morning with zero preservatives.</p>
+          <h3 style="margin-top:1.5rem">🧅 Jain Option Available</h3>
+          <p>We offer a <strong>Jain meal option</strong> — no onion, no garlic, no root vegetables. Select Jain preference when placing your order and we will prepare your crate accordingly at no extra charge.</p>
+        </div>
+        <div class="about-values">
+          <ul class="park-list">
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Fresh cooked every morning</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Zero preservatives</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Dietician-approved recipes</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Jain meals available</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Delivered to your desk</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>No long-term commitment</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-section">
     <div class="container">
       <div class="cta-band">
         <div>
@@ -446,6 +491,7 @@
       </label>
     </div>
     <button class="btn btn-wa btn-block" type="button" id="checkout"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg>Send order on WhatsApp</button>
+    <button class="btn btn-solid btn-block" type="button" id="payNow" style="margin-top:.6rem;background:#2b7a4b">💳 Pay Now with Razorpay</button>
     <button class="link-btn" type="button" id="clearCart">Clear cart</button>
     <p class="cart-status" id="cartStatus" role="status" hidden></p>
   </div>
@@ -455,5 +501,41 @@
 
 <script src="js/config.js"></script>
 <script src="js/main.js"></script>
+<script>
+// ── Razorpay Pay Now ──────────────────────────────────────────
+document.getElementById('payNow').addEventListener('click', function() {
+  const name  = document.getElementById('c-name').value.trim() || 'Customer';
+  const loc   = document.getElementById('c-loc').value.trim()  || 'Not specified';
+  const total = parseInt((document.getElementById('cartTotal').textContent || '0').replace(/[^\d]/g,'')) || 0;
+
+  if (total === 0) { alert('Your cart is empty!'); return; }
+
+  const options = {
+    key: 'YOUR_RAZORPAY_KEY_ID',          // ← replace with your Razorpay Key ID
+    amount: total * 100,                   // paise
+    currency: 'INR',
+    name: 'Diet Crate',
+    description: 'Meal Crate Order',
+    image: 'img/hero.jpg',
+    prefill: { name: name },
+    notes: { location: loc },
+    theme: { color: '#2b7a4b' },
+    handler: async function(response) {
+      const orderData = {
+        customerName : name,
+        location     : loc,
+        amountINR    : total,
+        paymentId    : response.razorpay_payment_id,
+        status       : 'paid',
+        items        : document.getElementById('cartTotal').textContent,
+      };
+      if (window._saveOrder) await window._saveOrder(orderData);
+      alert('Payment successful! Payment ID: ' + response.razorpay_payment_id);
+    }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+});
+</script>
 </body>
 </html>
